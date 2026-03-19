@@ -10,14 +10,7 @@
     --scroll-distance: 0px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-/* Global Image Safety Net */
-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
     background-color: var(--black);
@@ -29,10 +22,9 @@ body {
     color: var(--white);
     font-family: 'Rajdhani', sans-serif;
     overflow-x: hidden;
-    line-height: 1.6;
 }
 
-/* --- NAVBAR & MARQUEE --- */
+/* NAVBAR & MARQUEE */
 .navbar {
     display: flex; flex-direction: column; padding: 0.8rem 5%;
     background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(10px);
@@ -40,22 +32,14 @@ body {
 }
 
 .nav-brand-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 20px; }
-
 .social-links { display: flex; gap: 15px; flex-shrink: 0; }
 .social-links a { color: var(--white); font-size: 1.2rem; opacity: 0.6; transition: 0.3s; }
-.social-links a:hover { opacity: 1; color: var(--neon-blue); }
 
 .nav-marquee { flex-grow: 1; overflow: hidden; mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); max-width: 50%; display: flex; }
 .nav-marquee-content { display: flex; gap: 4rem; align-items: center; white-space: nowrap; width: max-content; }
 
-/* MARQUEE IMAGE FIX: Locked height ensures they don't blow up */
-.nav-marquee-content img {
-    height: 25px !important;
-    width: auto !important;
-    opacity: 0.5;
-    filter: grayscale(1);
-    object-fit: contain;
-}
+/* HARD LOCK ON MARQUEE IMAGE HEIGHT */
+.nav-marquee-content img { height: 25px !important; width: auto !important; opacity: 0.5; filter: grayscale(1); object-fit: contain; }
 
 @keyframes navScroll { from { transform: translateX(0); } to { transform: translateX(var(--scroll-distance)); } }
 
@@ -68,8 +52,7 @@ body {
 .nav-links a { text-decoration: none; color: var(--white); font-family: var(--robot-font); font-size: 0.8rem; transition: 0.3s; opacity: 0.6; }
 .nav-links a.active { opacity: 1; color: var(--neon-blue); text-shadow: 0 0 8px var(--neon-blue); }
 
-/* --- CONTENT CONTAINERS --- */
-.container { padding: 2rem 5%; max-width: 1200px; margin: 0 auto; }
+.container { padding: 2rem 8%; max-width: 1200px; margin: 0 auto; }
 .content-section { animation: slideUp 0.4s ease-out; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -77,34 +60,23 @@ body {
 .highlight { color: var(--neon-blue); }
 
 .about-card { background: rgba(18, 18, 18, 0.8); border: 1px solid #333; padding: 25px; border-radius: 8px; }
-
-/* 3-COLUMN SPECS GRID */
 .specs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 2rem; }
 .spec-item { background: rgba(0, 94, 255, 0.1); padding: 12px 18px; border-radius: 4px; border: 1px solid var(--royal-blue); font-family: var(--robot-font); font-size: 0.85rem; text-align: center; }
-.spec-item strong { color: var(--neon-blue); display: block; font-size: 0.7rem; }
+.spec-item strong { color: var(--neon-blue); margin-right: 5px; }
 
-/* --- ABOUT IMAGES (RE-RE-FIXED) --- */
+/* ABOUT IMAGES HARD CONSTRAINTS */
 .about-narrative { border-top: 1px solid #333; padding-top: 2rem; color: #ccc; }
 .about-narrative p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; }
 .about-image-block { margin-bottom: 2rem; text-align: center; width: 100%; overflow: hidden; }
-
-/* FORCED CONSTRAINTS: This will stop them from going outside the box on mobile */
 .narrative-image {
-    display: block;
-    margin: 0 auto;
-    width: 100% !important;
-    max-width: 800px !important;
-    height: auto !important;
-    border-radius: 4px;
-    border: 1px solid #444;
+    display: block; margin: 0 auto;
+    width: 100% !important; max-width: 800px !important;
+    height: auto !important; border-radius: 4px; border: 1px solid #444;
 }
-
-/* Robot stays slightly smaller but still responsive */
 .robot-image { max-width: 500px !important; }
-
 .image-caption { font-family: var(--robot-font); font-size: 0.7rem; color: #888; margin-top: 8px; letter-spacing: 1px; }
 
-/* --- CLIPS & EVENTS --- */
+/* CLIPS & EVENTS */
 .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
 .video-card-link { text-decoration: none; color: inherit; display: block; }
 .video-card { background: rgba(18, 18, 18, 0.9); border: 1px solid #333; padding: 15px; border-radius: 8px; transition: 0.3s; }
@@ -113,9 +85,9 @@ body {
 .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 .video-info h3 { margin-top: 15px; font-family: var(--robot-font); font-size: 1rem; }
 
-.stats-card { background: linear-gradient(145deg, rgba(10,10,10,0.9), rgba(0,26,77,0.8)); border: 1px solid #333; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+.stats-card { background: linear-gradient(145deg, rgba(10,10,10,0.9), rgba(0,26,77,0.8)); border: 1px solid #333; padding: 25px; border-radius: 8px; margin-bottom: 30px; }
 .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
-.report-section h4 { color: var(--neon-blue); font-size: 0.75rem; font-family: var(--robot-font); margin-bottom: 5px; }
+.report-section h4 { color: var(--neon-blue); font-size: 0.75rem; margin-bottom: 5px; font-family: var(--robot-font); }
 .match-scroll { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; }
 .match-badge { font-size: 0.65rem; padding: 4px 8px; background: #222; border-radius: 4px; font-family: var(--robot-font); border-left: 3px solid transparent; }
 .match-badge.win { border-left-color: #00ff00; color: #00ff00; }
@@ -125,21 +97,16 @@ body {
 .btn-link { text-decoration: none; color: #fff; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 4px; border: 1px solid #444; font-size: 0.7rem; font-family: var(--robot-font); transition: 0.3s; }
 .btn-link:hover { background: var(--neon-blue); border-color: var(--neon-blue); }
 
-/* --- MOBILE SPECIFIC OVERRIDES --- */
-@media (max-width: 768px) {
-    .nav-brand-row { flex-direction: column; text-align: center; gap: 10px; }
-    .nav-marquee { max-width: 100%; margin: 10px 0; order: 3; }
-    .logo-group { order: 1; }
-    .social-links { order: 2; }
-
-    .nav-marquee-content img { height: 20px !important; } /* Extra small marquee for mobile */
-
-    .specs-grid { grid-template-columns: 1fr; }
-    .container { padding: 1.5rem 4%; }
-    .report-grid { grid-template-columns: 1fr; }
-
-    .narrative-image {
-        width: 100% !important;
-        max-width: 100% !important;
-    }
+/* MOBILE HARDENING (IPHONE OPTIMIZED) */
+@media screen and (max-width: 768px) {
+    html { -webkit-text-size-adjust: 100%; }
+    .navbar { padding: 0.5rem 3%; }
+    .nav-brand-row { flex-direction: column !important; align-items: center !important; gap: 12px; }
+    .nav-marquee { max-width: 100% !important; width: 100% !important; margin: 5px 0; }
+    .nav-marquee-content img { height: 18px !important; }
+    .logo-group { order: -1; }
+    .container { padding: 1rem 4%; }
+    .specs-grid { grid-template-columns: 1fr !important; }
+    .report-grid { grid-template-columns: 1fr !important; }
+    .narrative-image { width: 100% !important; max-width: 100% !important; }
 }

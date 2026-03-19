@@ -26,6 +26,7 @@ function showSection(sectionId) {
     const activeLink = Array.from(navItems).find(link => link.getAttribute('onclick').includes(sectionId));
     if (activeLink) activeLink.classList.add('active');
     if (sectionId === 'stats') { fetchTeamStats(); }
+    window.scrollTo(0, 0); // Reset scroll for iPhone
 }
 
 async function fetchTeamStats() {
@@ -45,7 +46,6 @@ async function fetchTeamStats() {
 
         for (const event of events) {
             const eventStartDate = new Date(event.start_date);
-
             if (eventStartDate > today) {
                 html += `
                     <div class="stats-card">
