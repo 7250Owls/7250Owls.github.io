@@ -24,7 +24,6 @@ body {
     overflow-x: hidden;
 }
 
-/* NAVBAR & MARQUEE */
 .navbar {
     display: flex; flex-direction: column; padding: 0.8rem 5%;
     background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(10px);
@@ -38,7 +37,6 @@ body {
 .nav-marquee { flex-grow: 1; overflow: hidden; mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); max-width: 50%; display: flex; }
 .nav-marquee-content { display: flex; gap: 4rem; align-items: center; white-space: nowrap; width: max-content; }
 
-/* HARD LOCK ON MARQUEE IMAGE HEIGHT */
 .nav-marquee-content img { height: 25px !important; width: auto !important; opacity: 0.5; filter: grayscale(1); object-fit: contain; }
 
 @keyframes navScroll { from { transform: translateX(0); } to { transform: translateX(var(--scroll-distance)); } }
@@ -64,7 +62,6 @@ body {
 .spec-item { background: rgba(0, 94, 255, 0.1); padding: 12px 18px; border-radius: 4px; border: 1px solid var(--royal-blue); font-family: var(--robot-font); font-size: 0.85rem; text-align: center; }
 .spec-item strong { color: var(--neon-blue); margin-right: 5px; }
 
-/* ABOUT IMAGES HARD CONSTRAINTS */
 .about-narrative { border-top: 1px solid #333; padding-top: 2rem; color: #ccc; }
 .about-narrative p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; }
 .about-image-block { margin-bottom: 2rem; text-align: center; width: 100%; overflow: hidden; }
@@ -76,7 +73,6 @@ body {
 .robot-image { max-width: 500px !important; }
 .image-caption { font-family: var(--robot-font); font-size: 0.7rem; color: #888; margin-top: 8px; letter-spacing: 1px; }
 
-/* CLIPS & EVENTS */
 .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
 .video-card-link { text-decoration: none; color: inherit; display: block; }
 .video-card { background: rgba(18, 18, 18, 0.9); border: 1px solid #333; padding: 15px; border-radius: 8px; transition: 0.3s; }
@@ -97,7 +93,6 @@ body {
 .btn-link { text-decoration: none; color: #fff; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 4px; border: 1px solid #444; font-size: 0.7rem; font-family: var(--robot-font); transition: 0.3s; }
 .btn-link:hover { background: var(--neon-blue); border-color: var(--neon-blue); }
 
-/* MOBILE HARDENING (IPHONE OPTIMIZED) */
 @media screen and (max-width: 768px) {
     html { -webkit-text-size-adjust: 100%; }
     .navbar { padding: 0.5rem 3%; }
