@@ -90,7 +90,6 @@ async function fetchTeamStats() {
 
             let allianceDisplay = status?.alliance?.name ? status.alliance.name.replace(/Alliance\s+/i, '') : "Unpicked";
 
-            // ROBORUSTIC PLAYOFF LOGIC
             let finish = "Did not advance to Playoffs";
             const pStatus = status?.playoff?.status;
 
@@ -101,31 +100,7 @@ async function fetchTeamStats() {
             else if (status?.alliance?.name && eventEndDate > today) finish = "Playoffs In Progress";
 
             html += `
-                <div class="stats-card">
-                    <h3 style="font-family:var(--robot-font); color:var(--neon-blue);">${event.name}</h3>
-                    <div class="report-grid">
-                        <div class="report-section">
-                            <h4>QUALIFICATIONS</h4>
-                            <p>Rank: <strong>${status?.qual?.ranking?.rank || 'N/A'}</strong></p>
-                            <p>Quals Record: <strong>${status?.qual?.ranking?.record?.wins || 0}W-${status?.qual?.ranking?.record?.losses || 0}L</strong></p>
-                        </div>
-                        <div class="report-section">
-                            <h4>PLAYOFFS</h4>
-                            <p>Alliance: <strong>${allianceDisplay}</strong></p>
-                            <p>Finish: <strong>${finish}</strong></p>
-                            <p>Playoffs Record: <strong>${pWins}W-${pLosses}L</strong></p>
-                        </div>
-                    </div>
-                    <div class="history-section">
-                        <h4>MATCH HISTORY</h4>
-                        <div class="match-scroll">${matchRows || 'Data pending...'}</div>
-                    </div>
-                    ${awards.length > 0 ? awards.map(a => `<div class="award-tag">🏆 ${a.name}</div>`).join('') : ''}
-                    <div class="external-links">
-                        <a href="https://www.thebluealliance.com/event/${event.key}" target="_blank" class="btn-link">TheBlueAlliance</a>
-                        <a href="https://www.statbotics.io/event/${event.key}" target="_blank" class="btn-link">Statbotics</a>
-                    </div>
-                </div>`;
+                <div class="stats-card"><h3 style="font-family:var(--robot-font); color:var(--neon-blue);">${event.name}</h3><div class="report-grid"><div class="report-section"><h4>QUALIFICATIONS</h4><p>Rank: <strong>${status?.qual?.ranking?.rank || 'N/A'}</strong></p><p>Quals Record: <strong>${status?.qual?.ranking?.record?.wins || 0}W-${status?.qual?.ranking?.record?.losses || 0}L</strong></p></div><div class="report-section"><h4>PLAYOFFS</h4><p>Alliance: <strong>${allianceDisplay}</strong></p><p>Finish: <strong>${finish}</strong></p><p>Playoffs Record: <strong>${pWins}W-${pLosses}L</strong></p></div></div><div class="history-section"><h4>MATCH HISTORY</h4><div class="match-scroll">${matchRows || 'Data pending...'}</div></div>${awards.length > 0 ? awards.map(a => `<div class="award-tag">🏆 ${a.name}</div>`).join('') : ''}<div class="external-links"><a href="https://www.thebluealliance.com/event/${event.key}" target="_blank" class="btn-link">TheBlueAlliance</a><a href="https://www.statbotics.io/event/${event.key}" target="_blank" class="btn-link">Statbotics</a></div></div>`;
         }
         container.innerHTML = html || '<p>No data found.</p>';
     } catch (err) {
