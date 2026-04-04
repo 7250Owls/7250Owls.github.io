@@ -167,6 +167,7 @@ export async function alertPopups(message) {
 function renderContent(post, indexPage) {
     let content = post.Post || '';
     const images = post.Images || [];
+    const postlength = 100; // Define postlength if not defined
 
     if (indexPage) {
         const lineBreak = content.indexOf('\n');
@@ -175,17 +176,23 @@ function renderContent(post, indexPage) {
         } else if (content.length > postlength) {
             content = content.substring(0, postlength) + '...';
         }
-        content = content.replace(/\[image\]/g, '');
+        // Remove all [imageN] placeholders
+        content = content.replace(/\[image\d+\]/g, ''); 
         return `<p class="post-content">${content}</p>`;
     }
 
-    let imageIndex = 0;
-    const parts = content.split('[image]');
-    return parts.map((part, i) => {
-        const text = part ? `<p class="post-content">${part}</p>` : '';
-        const image = images[imageIndex]
-            ? `<img class="post-image" src="${images[imageIndex++]}" alt="Blog image ${imageIndex}">`
-            : '';
-        return text + (i < parts.length - 1 ? image : '');
+    // Split by [image1], [image2], etc., keeping the tags to parse them
+    const parts = content.split(/(\[image\d+\])/);
+
+    return parts.map((part) => {
+        // If the part matches [imageN], extract N and return image
+        const match = part.match(/\[image(\d+)\]/);
+        if (match) {
+            const imageIndex = parseInt(match[1], 10) - 1; // Convert to 0-based
+            const imgSrc = images[imageIndex];
+            return imgSrc ? `<img class="post-image" src="${imgSrc}" alt="Blog image ${match[1]}">` : '';
+        }
+        // Otherwise, it's text
+        return part ? `<p class="post-content">${part}</p>` : '';
     }).join('');
 }

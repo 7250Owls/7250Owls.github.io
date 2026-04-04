@@ -43,7 +43,7 @@ export async function pageLoad(supabase) {
             <option value="Competition">Competition</option>
             <option value="Other">Other</option>
         </select>
-        <textarea id="blogContent" placeholder="Write your content here. Type [image] where you want an image to appear."></textarea>
+        <textarea id="blogContent" placeholder="Write your content here. Type [image(image number)] where you want an image to appear."></textarea>
         <div id="image-inputs"></div>
         <button type="button" id="add-image-btn">+ Add Image</button>
         <button type="submit">Submit</button>
