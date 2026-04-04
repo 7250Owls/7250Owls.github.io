@@ -56,7 +56,20 @@
 
   <main class="blog-main">
     <div id="blog-search-wrapper">
-      <input type="text" id="blog-search" placeholder="SEARCH POSTS..." autocomplete="off" spellcheck="false">
+      <div class="blog-search-inputs">
+        <input type="text" id="blog-search" placeholder="SEARCH TITLE / CONTENT..." autocomplete="off" spellcheck="false">
+        <input type="text" id="blog-search-author" placeholder="SEARCH AUTHOR..." autocomplete="off" spellcheck="false">
+      </div>
+      <div class="blog-genre-pills">
+        <button class="genre-pill active" data-genre="">ALL</button>
+        <button class="genre-pill" data-genre="Mechanical">⚙️ MECHANICAL</button>
+        <button class="genre-pill" data-genre="Electrical">⚡ ELECTRICAL</button>
+        <button class="genre-pill" data-genre="Programming">💻 PROGRAMMING</button>
+        <button class="genre-pill" data-genre="Business">📊 BUSINESS</button>
+        <button class="genre-pill" data-genre="Community">🤝 COMMUNITY</button>
+        <button class="genre-pill" data-genre="Competition">🏆 COMPETITION</button>
+        <button class="genre-pill" data-genre="Other">📝 OTHER</button>
+      </div>
       <span id="blog-search-count"></span>
     </div>
     <div id="container"></div>
@@ -92,22 +105,39 @@
       updateSearchVisibility();
     });
 
-    // ---- Search ----
-    const searchWrapper = document.getElementById('blog-search-wrapper');
-    const searchInput   = document.getElementById('blog-search');
-    const searchCount   = document.getElementById('blog-search-count');
+    // ---- Search / Filter ----
+    const searchWrapper  = document.getElementById('blog-search-wrapper');
+    const searchInput    = document.getElementById('blog-search');
+    const authorInput    = document.getElementById('blog-search-author');
+    const searchCount    = document.getElementById('blog-search-count');
+    const genrePills     = document.querySelectorAll('.genre-pill');
+    let   activeGenre    = '';
 
-    function filterPosts(query) {
+    function filterPosts() {
       const cards = document.querySelectorAll('#container .post-card');
       if (!cards.length) return;
-      const q = query.toLowerCase().trim();
-      let visible = 0;
+
+      const q      = searchInput.value.toLowerCase().trim();
+      const author = authorInput.value.toLowerCase().trim();
+      let visible  = 0;
+
       cards.forEach(card => {
-        const match = !q || card.textContent.toLowerCase().includes(q);
-        card.style.display = match ? '' : 'none';
-        if (match) visible++;
+        const title   = (card.querySelector('.post-title')?.textContent   || '').toLowerCase();
+        const content = (card.querySelector('.post-content')?.textContent || '').toLowerCase();
+        const cardAuthor = (card.querySelector('.author-date')?.textContent || '').toLowerCase();
+        const genre   = (card.querySelector('.post-genre')?.textContent   || '').toLowerCase();
+
+        const matchText   = !q      || title.includes(q)      || content.includes(q);
+        const matchAuthor = !author || cardAuthor.includes(author);
+        const matchGenre  = !activeGenre || genre.includes(activeGenre.toLowerCase());
+
+        const show = matchText && matchAuthor && matchGenre;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
       });
-      if (q) {
+
+      const anyFilter = q || author || activeGenre;
+      if (anyFilter) {
         searchCount.textContent = visible + ' result' + (visible !== 1 ? 's' : '');
         searchCount.style.display = 'inline';
       } else {
@@ -115,7 +145,17 @@
       }
     }
 
-    searchInput.addEventListener('input', () => filterPosts(searchInput.value));
+    searchInput.addEventListener('input', filterPosts);
+    authorInput.addEventListener('input', filterPosts);
+
+    genrePills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        genrePills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        activeGenre = pill.dataset.genre;
+        filterPosts();
+      });
+    });
 
     // Hide search on upload/login views
     function updateSearchVisibility() {
@@ -123,13 +163,17 @@
       const hide = hash === '#upload' || hash === '#login';
       searchWrapper.style.display = hide ? 'none' : '';
       if (hide) {
-        searchInput.value = '';
+        searchInput.value  = '';
+        authorInput.value  = '';
+        activeGenre        = '';
+        genrePills.forEach(p => p.classList.remove('active'));
+        genrePills[0].classList.add('active');
         searchCount.style.display = 'none';
       }
     }
 
     // Re-apply filter when main.js repopulates #container
-    const observer = new MutationObserver(() => filterPosts(searchInput.value));
+    const observer = new MutationObserver(filterPosts);
     observer.observe(document.getElementById('container'), { childList: true });
 
     updateSearchVisibility();
