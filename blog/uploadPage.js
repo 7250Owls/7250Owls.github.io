@@ -161,11 +161,11 @@ async function uploadData(supabase) {
         .from('bloginfo')
         .insert([{
             blogPath: path,
+            genre: genre,
             blogData: {
                 PostName: title,
                 Post: content,
                 Author: author,
-                Genre: genre,
                 Images: imageUrls
             }
         }]);
