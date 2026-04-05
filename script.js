@@ -1,7 +1,7 @@
 const TBA_API_KEY = 'Imp1K3Z8VHhPqSpujx5KjiR1nJhTGCL5RA6WyhAqFV1RyRVcwfxQFwezyEusYQVU';
 const TEAM_KEY = 'frc7250';
 const CURRENT_YEAR = new Date().getFullYear();
-const YEARS_TO_SHOW = CURRENT_YEAR - 2018+1;
+const YEARS_TO_SHOW = CURRENT_YEAR - 2018 + 1;
 let statsCache = {};
 
 function toggleMatches(btn) {
@@ -36,10 +36,13 @@ function showSection(sectionId) {
     if (target) target.style.display = 'block';
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => item.classList.remove('active'));
-    const activeLink = Array.from(navItems).find(link => link.getAttribute('onclick').includes(sectionId));
+    const activeLink = Array.from(navItems).find(link => {
+        const onclick = link.getAttribute('onclick');
+        return onclick && onclick.includes(sectionId);
+    });
     if (activeLink) activeLink.classList.add('active');
     if (sectionId === 'stats') { fetchTeamStats(); }
-    if (sectionId === 'live') { fetchLiveStream(); }  // ← this line
+    if (sectionId === 'live') { fetchLiveStream(); }
     window.scrollTo(0, 0);
 }
 
@@ -48,7 +51,7 @@ function switchYear(year) {
     const tabs = tabsContainer.querySelectorAll('.year-tab');
     tabs.forEach(tab => tab.classList.remove('active'));
     event.target.classList.add('active');
-    
+
     const container = document.getElementById('stats-container');
     if (statsCache[year]) {
         container.innerHTML = statsCache[year];
@@ -64,8 +67,8 @@ async function fetchTeamStats() {
 
     try {
         // Create tabs for years
-        const yearsArray = Array.from({length: YEARS_TO_SHOW}, (_, i) => CURRENT_YEAR - i);
-        const tabsHTML = yearsArray.map((year, idx) => 
+        const yearsArray = Array.from({ length: YEARS_TO_SHOW }, (_, i) => CURRENT_YEAR - i);
+        const tabsHTML = yearsArray.map((year, idx) =>
             `<button class="year-tab${idx === 0 ? ' active' : ''}" onclick="switchYear(${year})">${year}</button>`
         ).join('');
         document.getElementById('year-tabs').innerHTML = tabsHTML;
@@ -73,7 +76,7 @@ async function fetchTeamStats() {
         // Fetch data for all years
         for (const year of yearsArray) {
             if (statsCache[year]) continue; // Skip if already cached
-            
+
             const eventsRes = await fetch(`https://www.thebluealliance.com/api/v3/team/${TEAM_KEY}/events/${year}`, {
                 headers: { 'X-TBA-Auth-Key': TBA_API_KEY }
             });
@@ -111,7 +114,7 @@ async function fetchTeamStats() {
 
                 const teamMatches = matches.filter(m => m.alliances.blue.team_keys.includes(TEAM_KEY) || m.alliances.red.team_keys.includes(TEAM_KEY));
                 const sortedMatches = teamMatches.sort((a, b) => a.time - b.time);
-                
+
                 const qualMatches = sortedMatches.filter(m => m.comp_level === 'qm').map(m => {
                     const isBlue = m.alliances.blue.team_keys.includes(TEAM_KEY);
                     const alliance = isBlue ? 'BLUE' : 'RED';
@@ -121,7 +124,7 @@ async function fetchTeamStats() {
                     const videoLink = m.videos && m.videos.length > 0 ? `<a href="https://www.youtube.com/watch?v=${m.videos[0].key}" target="_blank" class="video-link">▶</a>` : '';
                     return `<div class="match-card-wrapper"><span class="match-badge ${resultClass}">Q${m.match_number}<br>[${alliance}]<br>${myScore}-${oppScore}</span>${videoLink}</div>`;
                 }).join('');
-                
+
                 const playoffMatches = sortedMatches.filter(m => m.comp_level !== 'qm').map(m => {
                     const isBlue = m.alliances.blue.team_keys.includes(TEAM_KEY);
                     const alliance = isBlue ? 'BLUE' : 'RED';
@@ -180,7 +183,7 @@ async function fetchTeamStats() {
             }
             statsCache[year] = html;
         }
-        
+
         // Display current year data
         container.innerHTML = statsCache[CURRENT_YEAR];
     } catch (err) {
@@ -254,10 +257,12 @@ async function fetchLiveStream() {
         );
         const matches = await matchesRes.json();
 
-        const now = Math.floor(Date.now() / 1000); // unix seconds
+        const now = Math.floor(Date.now() / 1000);
         const upcoming = matches
-            .filter(m => m.predicted_time && m.predicted_time > now && m.actual_time == null)
-            .sort((a, b) => a.predicted_time - b.predicted_time)[0];
+            .filter(m => (m.predicted_time || m.scheduled_time) && m.actual_time == null)
+            .map(m => ({ ...m, _countdown_time: m.predicted_time || m.scheduled_time }))
+            .filter(m => m._countdown_time > now)
+            .sort((a, b) => a._countdown_time - b._countdown_time)[0];
 
         let timerHTML = '';
         if (upcoming) {
@@ -301,7 +306,7 @@ async function fetchLiveStream() {
             window._countdownInterval = setInterval(() => {
                 const el = document.getElementById('match-countdown');
                 if (!el) { clearInterval(window._countdownInterval); return; }
-                const secsLeft = upcoming.predicted_time - Math.floor(Date.now() / 1000);
+                const secsLeft = upcoming._countdown_time - Math.floor(Date.now() / 1000);
                 if (secsLeft <= 0) {
                     el.textContent = 'QUEUING NOW';
                     clearInterval(window._countdownInterval);
@@ -311,8 +316,8 @@ async function fetchLiveStream() {
                 const m = Math.floor((secsLeft % 3600) / 60);
                 const s = secsLeft % 60;
                 el.textContent = h > 0
-                    ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
-                    : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                    ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+                    : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
             }, 1000);
         }
     } catch (err) {
@@ -454,8 +459,6 @@ async function prefetchCurrentYear() {
         // silently fail — fetchTeamStats will handle errors when user clicks EVENTS
     }
 }
-document.addEventListener('DOMContentLoaded', () => {
-    initMarquee();
-    prefetchCurrentYear();
-    checkForActiveEvent();
-});
+initMarquee();
+checkForActiveEvent();
+prefetchCurrentYear();
