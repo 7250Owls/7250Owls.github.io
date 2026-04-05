@@ -108,30 +108,22 @@ export async function pageLoad(supabase) {
     });
 
     function insertImageAtCursor(url) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'image-wrapper';
-
         const img = document.createElement('img');
         img.src = url;
         img.className = 'post-image';
-
-        const handle = document.createElement('div');
-        handle.className = 'resize-handle';
-
-        wrapper.appendChild(img);
-        wrapper.appendChild(handle);
-
+        
         const selection = window.getSelection();
         const range = selection.rangeCount ? selection.getRangeAt(0) : null;
 
         if (range) {
             range.deleteContents();
-            range.insertNode(wrapper);
+            range.insertNode(img);
+            range.setStartAfter(img);  // move cursor after image
+            selection.removeAllRanges();
+            selection.addRange(range);
         } else {
-            editor.appendChild(wrapper);
+            editor.appendChild(img);
         }
-
-        enableResize(wrapper, img, handle);
     }
 
     function enableResize(wrapper, img, handle) {
