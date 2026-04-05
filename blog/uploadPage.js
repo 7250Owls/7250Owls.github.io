@@ -56,7 +56,40 @@ export async function pageLoad(supabase) {
         </select>
 
         <div class="editor-toolbar">
-            <button type="button" id="add-image-btn">🖼 Insert Image</button>
+            <div class="toolbar-group">
+                <select id="font-size-select" title="Font size">
+                    <option value="" disabled selected>Size</option>
+                    <option value="12px">12</option>
+                    <option value="14px">14</option>
+                    <option value="16px">16</option>
+                    <option value="20px">20</option>
+                    <option value="24px">24</option>
+                    <option value="32px">32</option>
+                    <option value="48px">48</option>
+                </select>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <div class="toolbar-group">
+                <button type="button" class="toolbar-btn" id="bold-btn" title="Bold"><b>B</b></button>
+                <button type="button" class="toolbar-btn" id="italic-btn" title="Italic"><i>I</i></button>
+                <button type="button" class="toolbar-btn" id="underline-btn" title="Underline"><u>U</u></button>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <div class="toolbar-group">
+                <button type="button" class="toolbar-btn" id="align-left-btn" title="Align left">&#8676;</button>
+                <button type="button" class="toolbar-btn" id="align-center-btn" title="Align center">&#8578;</button>
+                <button type="button" class="toolbar-btn" id="align-right-btn" title="Align right">&#8677;</button>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <div class="toolbar-group">
+                <button type="button" class="toolbar-btn" id="add-image-btn" title="Insert image">🖼</button>
+            </div>
         </div>
 
         <div id="editor-container" style="position: relative;">
@@ -67,10 +100,76 @@ export async function pageLoad(supabase) {
         <button type="submit">Submit</button>
     </form>
     `;
-
     const imageLayer = document.getElementById('image-layer');
     const editor = document.getElementById('editor');
 
+    // Prevent toolbar buttons from stealing focus
+    document.querySelectorAll('.toolbar-btn').forEach(btn => {
+        btn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+        });
+    });
+
+    // Font size
+    document.getElementById('font-size-select').addEventListener('change', (e) => {
+        const size = e.target.value;
+        const selection = window.getSelection();
+
+        if (!selection.rangeCount || selection.isCollapsed) {
+            document.execCommand('styleWithCSS', false, true);
+            document.execCommand('fontSize', false, '7');
+            const fontEls = editor.querySelectorAll('font[size="7"]');
+            fontEls.forEach(el => {
+                const span = document.createElement('span');
+                span.style.fontSize = size;
+                span.innerHTML = el.innerHTML;
+                el.replaceWith(span);
+            });
+        } else {
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.style.fontSize = size;
+            range.surroundContents(span);
+        }
+
+        e.target.value = '';
+        editor.focus();
+    });
+
+    // Bold / Italic / Underline
+    document.getElementById('bold-btn').addEventListener('click', () => {
+        document.execCommand('bold');
+        updateToolbarState();
+    });
+    document.getElementById('italic-btn').addEventListener('click', () => {
+        document.execCommand('italic');
+        updateToolbarState();
+    });
+    document.getElementById('underline-btn').addEventListener('click', () => {
+        document.execCommand('underline');
+        updateToolbarState();
+    });
+
+    // Alignment
+    document.getElementById('align-left-btn').addEventListener('click', () => {
+        document.execCommand('justifyLeft');
+    });
+    document.getElementById('align-center-btn').addEventListener('click', () => {
+        document.execCommand('justifyCenter');
+    });
+    document.getElementById('align-right-btn').addEventListener('click', () => {
+        document.execCommand('justifyRight');
+    });
+
+    // Update active state when cursor moves
+    editor.addEventListener('keyup', updateToolbarState);
+    editor.addEventListener('mouseup', updateToolbarState);
+
+    function updateToolbarState() {
+        document.getElementById('bold-btn').classList.toggle('active', document.queryCommandState('bold'));
+        document.getElementById('italic-btn').classList.toggle('active', document.queryCommandState('italic'));
+        document.getElementById('underline-btn').classList.toggle('active', document.queryCommandState('underline'));
+    }
     // IMAGE INSERT
     document.getElementById('add-image-btn').addEventListener('click', () => {
         const input = document.createElement('input');
