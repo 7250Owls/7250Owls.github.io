@@ -41,6 +41,7 @@ function showSection(sectionId) {
     const activeLink = Array.from(navItems).find(link => link.getAttribute('onclick').includes(sectionId));
     if (activeLink) activeLink.classList.add('active');
     if (sectionId === 'stats') { fetchTeamStats(); }
+    if (sectionId === 'live') { fetchLiveStream(); }
     window.scrollTo(0, 0); // Reset scroll for iPhone
 }
 
@@ -188,5 +189,89 @@ async function fetchTeamStats() {
         container.innerHTML = '<p style="color:red">CONNECTION ERROR</p>';
     }
 }
+async function fetchLiveStream() {
+    const container = document.getElementById('live-container');
+    if (!container) return;
+    container.innerHTML = '<p>SCANNING FOR ACTIVE MATCHES...</p>';
 
-initMarquee();
+    try {
+        const today = new Date().toISOString().split('T')[0]; // "2026-04-05"
+
+        const eventsRes = await fetch(
+            `https://www.thebluealliance.com/api/v3/team/${TEAM_KEY}/events/${CURRENT_YEAR}`,
+            { headers: { 'X-TBA-Auth-Key': TBA_API_KEY } }
+        );
+        const events = await eventsRes.json();
+
+        const active = events.find(e => e.start_date <= today && e.end_date >= today);
+
+        if (!active) {
+            container.innerHTML = `
+                <div class="stats-card">
+                    <h3 style="font-family:var(--robot-font); color:var(--neon-blue);">NO ACTIVE EVENT</h3>
+                    <p style="margin-top:10px;">Team 7250 is not at a competition today.</p>
+                </div>`;
+            return;
+        }
+
+        const eventRes = await fetch(
+            `https://www.thebluealliance.com/api/v3/event/${active.key}`,
+            { headers: { 'X-TBA-Auth-Key': TBA_API_KEY } }
+        );
+        const event = await eventRes.json();
+        const webcasts = event.webcasts || [];
+
+        if (webcasts.length === 0) {
+            container.innerHTML = `
+                <div class="stats-card">
+                    <h3 style="font-family:var(--robot-font); color:var(--neon-blue);">${active.name}</h3>
+                    <p style="margin-top:10px;">🔴 Event is live but no stream link is registered on TBA yet.</p>
+                    <div class="external-links">
+                        <a href="https://www.thebluealliance.com/event/${active.key}" target="_blank" class="btn-link">TBA</a>
+                    </div>
+                </div>`;
+            return;
+        }
+
+        const { type, channel } = webcasts[0];
+        let src = null;
+        if (type === 'twitch')
+            src = `https://player.twitch.tv/?channel=${channel}&parent=${location.hostname}`;
+        else if (type === 'youtube')
+            src = `https://www.youtube.com/embed/live_stream?channel=${channel}`;
+        else if (type === 'youtube_video')
+            src = `https://www.youtube.com/embed/${channel}`;
+
+        if (!src) {
+            container.innerHTML = `
+                <div class="stats-card">
+                    <h3 style="font-family:var(--robot-font); color:var(--neon-blue);">${active.name}</h3>
+                    <p style="margin-top:10px;">Stream type <strong>${type}</strong> isn't embeddable. Watch on TBA:</p>
+                    <div class="external-links">
+                        <a href="https://www.thebluealliance.com/event/${active.key}" target="_blank" class="btn-link">TBA</a>
+                    </div>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="stats-card" style="width:100%; max-width:900px; margin:0 auto;">
+                <h3 style="font-family:var(--robot-font); color:var(--neon-blue);">🔴 LIVE — ${active.name}</h3>
+                <p style="margin-bottom:12px;">📍 ${active.city}, ${active.state_prov}</p>
+                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px;">
+                    <iframe
+                        src="${src}"
+                        style="position:absolute; top:0; left:0; width:100%; height:100%;"
+                        allowfullscreen
+                        frameborder="0">
+                    </iframe>
+                </div>
+                <div class="external-links" style="margin-top:12px;">
+                    <a href="https://www.thebluealliance.com/event/${active.key}" target="_blank" class="btn-link">TBA</a>
+                    <a href="https://www.statbotics.io/event/${active.key}" target="_blank" class="btn-link">Statbotics</a>
+                </div>
+            </div>`;
+    } catch (err) {
+        container.innerHTML = '<p style="color:red">CONNECTION ERROR</p>';
+    }
+}
