@@ -179,5 +179,19 @@ function renderContent(post, indexPage) {
     }
 
     // Full post: render HTML directly
+    setTimeout(() => {
+        document.querySelectorAll('.image-wrapper').forEach(w => {
+            const x = w.getAttribute('data-x');
+            const y = w.getAttribute('data-y');
+            const width = w.getAttribute('data-width');
+
+            if (x) w.style.left = x;
+            if (y) w.style.top = y;
+
+            const img = w.querySelector('img');
+            if (img && width) img.style.width = width;
+        });
+    }, 0);
+
     return `<div class="post-content">${content}</div>`;
 }

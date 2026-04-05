@@ -108,12 +108,13 @@ export async function pageLoad(supabase) {
     });
 
     function insertImageAtCursor(url) {
-        const wrapper = document.createElement('span');
+        const wrapper = document.createElement('div');
         wrapper.className = 'image-wrapper';
 
         const img = document.createElement('img');
         img.src = url;
         img.className = 'post-image';
+        img.style.width = '300px';
 
         const handle = document.createElement('div');
         handle.className = 'resize-handle';
@@ -121,21 +122,56 @@ export async function pageLoad(supabase) {
         wrapper.appendChild(img);
         wrapper.appendChild(handle);
 
-        // Always append to the end
+        // Default position
+        wrapper.style.left = '20px';
+        wrapper.style.top = '20px';
+
         editor.appendChild(wrapper);
 
-        // Optional: add a line break after so typing continues nicely
-        const br = document.createElement('br');
-        editor.appendChild(br);
-
         enableResize(wrapper, img, handle);
+        enableDrag(wrapper);
+    }
+
+    function enableDrag(wrapper) {
+        let isDragging = false;
+
+        wrapper.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('resize-handle')) return;
+
+            isDragging = true;
+
+            const rect = wrapper.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const offsetY = e.clientY - rect.top;
+
+            function onMove(e) {
+                if (!isDragging) return;
+
+                const editorRect = editor.getBoundingClientRect();
+
+                let x = e.clientX - editorRect.left - offsetX;
+                let y = e.clientY - editorRect.top - offsetY;
+
+                wrapper.style.left = x + 'px';
+                wrapper.style.top = y + 'px';
+            }
+
+            function onUp() {
+                isDragging = false;
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            }
+
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
     }
 
     function enableResize(wrapper, img, handle) {
         let isResizing = false;
 
         handle.addEventListener('mousedown', (e) => {
-            e.preventDefault();
+            e.stopPropagation(); // prevent drag conflict
             isResizing = true;
 
             const startX = e.clientX;
@@ -143,8 +179,9 @@ export async function pageLoad(supabase) {
 
             function onMove(e) {
                 if (!isResizing) return;
+
                 const newWidth = startWidth + (e.clientX - startX);
-                img.style.width = Math.max(newWidth, 30) + 'px'; // prevent too small
+                img.style.width = Math.max(newWidth, 50) + 'px';
             }
 
             function onUp() {
@@ -158,17 +195,17 @@ export async function pageLoad(supabase) {
         });
     }
 
-        // CLICK TO SELECT IMAGE
-        editor.addEventListener('click', (e) => {
-            document.querySelectorAll('.image-wrapper').forEach(w => {
-                w.classList.remove('selected');
-            });
-
-            const wrapper = e.target.closest('.image-wrapper');
-            if (wrapper) {
-                wrapper.classList.add('selected');
-            }
+    // CLICK TO SELECT IMAGE
+    editor.addEventListener('click', (e) => {
+        document.querySelectorAll('.image-wrapper').forEach(w => {
+            w.classList.remove('selected');
         });
+
+        const wrapper = e.target.closest('.image-wrapper');
+        if (wrapper) {
+            wrapper.classList.add('selected');
+        }
+    });
 
     // SUBMIT
     document.getElementById('upload-form').addEventListener('submit', async (e) => {
@@ -187,7 +224,15 @@ export async function pageLoad(supabase) {
         const title = document.getElementById('blogTitle').value;
         const genre = document.getElementById('blogGenre').value;
 
-        const contentHTML = editor.innerHTML;
+        const wrappers = editor.querySelectorAll('.image-wrapper');
+
+        wrappers.forEach(w => {
+            w.setAttribute('data-x', w.style.left);
+            w.setAttribute('data-y', w.style.top);
+
+            const img = w.querySelector('img');
+            w.setAttribute('data-width', img.style.width);
+        });
 
         if (!contentHTML.trim()) {
             return alertPopups("Content empty.");

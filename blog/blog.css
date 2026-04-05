@@ -18,17 +18,20 @@
     border: 1px solid #ccc;
     min-height: 200px;
     padding: 10px;
+    position: relative;
 }
 
 .image-wrapper {
-    position: relative;
-    display: inline-block;
-    margin: 10px 0;
+    position: absolute; /* key change */
+    top: 0;
+    left: 0;
+    cursor: move;
+    user-select: none;
 }
 
 .post-image {
-    max-width: 100%;
-    display: inline-block;
+    display: block;
+    max-width: none; /* important for resizing */
 }
 
 .resize-handle {
@@ -39,7 +42,7 @@
     bottom: 0;
     right: 0;
     cursor: se-resize;
-    display: none;
+    border-radius: 0px 50% 50% 50%;
 }
 
 .image-wrapper.selected .resize-handle {
