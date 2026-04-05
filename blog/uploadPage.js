@@ -59,8 +59,9 @@ export async function pageLoad(supabase) {
             <button type="button" id="add-image-btn">🖼 Insert Image</button>
         </div>
 
-        <div id="editor" class="editor" contenteditable="true"></div>
-        <div id="image-layer" class="image-layer"></div>
+        <div id="editor" class="editor" contenteditable="true">
+            <div id="image-layer" class="image-layer"></div>
+        </div>
 
         <button type="submit">Submit</button>
     </form>
@@ -163,7 +164,7 @@ function enableDrag(wrapper) {
         function onMove(e) {
             if (!isDragging) return;
 
-            const editorRect = editor.getBoundingClientRect();
+            const editorRect = imageLayer.getBoundingClientRect(); // not editor anymore
 
             let x = e.clientX - editorRect.left - offsetX;
             let y = e.clientY - editorRect.top - offsetY;
