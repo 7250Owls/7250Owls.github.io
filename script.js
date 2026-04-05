@@ -41,8 +41,8 @@ function showSection(sectionId) {
     const activeLink = Array.from(navItems).find(link => link.getAttribute('onclick').includes(sectionId));
     if (activeLink) activeLink.classList.add('active');
     if (sectionId === 'stats') { fetchTeamStats(); }
-    if (sectionId === 'live') { fetchLiveStream(); }
-    window.scrollTo(0, 0); // Reset scroll for iPhone
+    if (sectionId === 'live') { fetchLiveStream(); }  // ← this line
+    window.scrollTo(0, 0);
 }
 
 function switchYear(year) {
@@ -254,7 +254,37 @@ async function fetchLiveStream() {
             return;
         }
 
+        // Fetch next match time
+        const matchesRes = await fetch(
+            `https://www.thebluealliance.com/api/v3/team/${TEAM_KEY}/event/${active.key}/matches`,
+            { headers: { 'X-TBA-Auth-Key': TBA_API_KEY } }
+        );
+        const matches = await matchesRes.json();
+
+        const now = Math.floor(Date.now() / 1000); // unix seconds
+        const upcoming = matches
+            .filter(m => m.predicted_time && m.predicted_time > now && m.actual_time == null)
+            .sort((a, b) => a.predicted_time - b.predicted_time)[0];
+
+        let timerHTML = '';
+        if (upcoming) {
+            const levelLabel = upcoming.comp_level === 'qm'
+                ? `Qual ${upcoming.match_number}`
+                : `${upcoming.comp_level.toUpperCase()} ${upcoming.set_number}-${upcoming.match_number}`;
+            const isBlue = upcoming.alliances.blue.team_keys.includes(TEAM_KEY);
+            const allianceColor = isBlue ? 'var(--neon-blue)' : '#ff4444';
+            const allianceLabel = isBlue ? 'BLUE' : 'RED';
+
+            timerHTML = `
+                <div class="stats-card" style="text-align:center; margin:0 auto 16px; max-width:900px;">
+                    <h3 style="font-family:var(--robot-font); color:var(--neon-blue);">NEXT MATCH</h3>
+                    <p style="margin:6px 0;">${levelLabel} — <span style="color:${allianceColor}; font-weight:bold;">${allianceLabel} ALLIANCE</span></p>
+                    <div id="match-countdown" style="font-family:var(--robot-font); font-size:2rem; color:var(--neon-blue); margin-top:8px;">--:--</div>
+                </div>`;
+        }
+
         container.innerHTML = `
+            ${timerHTML}
             <div class="stats-card" style="width:100%; max-width:900px; margin:0 auto;">
                 <h3 style="font-family:var(--robot-font); color:var(--neon-blue);">🔴 LIVE — ${active.name}</h3>
                 <p style="margin-bottom:12px;">📍 ${active.city}, ${active.state_prov}</p>
@@ -271,7 +301,45 @@ async function fetchLiveStream() {
                     <a href="https://www.statbotics.io/event/${active.key}" target="_blank" class="btn-link">Statbotics</a>
                 </div>
             </div>`;
+
+        // Start countdown if there's an upcoming match
+        if (upcoming) {
+            if (window._countdownInterval) clearInterval(window._countdownInterval);
+            window._countdownInterval = setInterval(() => {
+                const el = document.getElementById('match-countdown');
+                if (!el) { clearInterval(window._countdownInterval); return; }
+                const secsLeft = upcoming.predicted_time - Math.floor(Date.now() / 1000);
+                if (secsLeft <= 0) {
+                    el.textContent = 'QUEUING NOW';
+                    clearInterval(window._countdownInterval);
+                    return;
+                }
+                const h = Math.floor(secsLeft / 3600);
+                const m = Math.floor((secsLeft % 3600) / 60);
+                const s = secsLeft % 60;
+                el.textContent = h > 0
+                    ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+                    : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            }, 1000);
+        }
     } catch (err) {
         container.innerHTML = '<p style="color:red">CONNECTION ERROR</p>';
+    }
+}
+async function checkForActiveEvent() {
+    const liveNavItem = document.querySelector('.nav-item[onclick*="live"]').parentElement;
+    liveNavItem.style.display = 'none'; // hidden by default
+
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const res = await fetch(
+            `https://www.thebluealliance.com/api/v3/team/${TEAM_KEY}/events/${CURRENT_YEAR}/simple`,
+            { headers: { 'X-TBA-Auth-Key': TBA_API_KEY } }
+        );
+        const events = await res.json();
+        const active = events.find(e => e.start_date <= today && e.end_date >= today);
+        if (active) liveNavItem.style.display = '';
+    } catch (err) {
+        // silently fail — nav item stays hidden
     }
 }
