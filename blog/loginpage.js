@@ -1,4 +1,4 @@
-import { alertPopups } from "./main.js";
+import { alertPopups, updateUserDisplay } from "./main.js";
 export async function pageLoad(supabase) {
     const container = document.getElementById('container');
     const alert = document.getElementById('alert');
@@ -22,6 +22,7 @@ export async function pageLoad(supabase) {
         if (error) {
             alertPopups(`Login Error: ${error.message}`);
         } else {
+            updateUserDisplay();
             alertPopups("Welcome back!");
             window.location.hash = ""; // Go home
         }
