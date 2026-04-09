@@ -234,7 +234,7 @@ async function fetchLiveStream() {
         if (type === 'twitch')
             src = `https://player.twitch.tv/?channel=${channel}&parent=${location.hostname}`;
         else if (type === 'youtube')
-            src = `https://www.youtube.com/embed/live_stream?channel=${channel}`;
+            src = `https://www.youtube.com/embed/${channel}`;
         else if (type === 'youtube_video')
             src = `https://www.youtube.com/embed/${channel}`;
 
