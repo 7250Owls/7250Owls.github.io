@@ -189,7 +189,7 @@ function renderContent(post, indexPage) {
   );
   const maxBottom = Math.max(maxImageBottom, maxVideoBottom);
 
-  let html = `<div class="post-content-wrapper" style="position: relative; width: 100%;">`;
+  let html = `<div class="post-content-wrapper" style="position:relative; width:100%; min-height:${maxBottom}px;">`;
   html += `<div class="post-content">${content}</div>`;
   html += `<div class="image-layer">`;
 

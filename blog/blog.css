@@ -766,4 +766,35 @@
   #blog-search-author {
     flex: 1;
   }
+
+  /* ---- Image layer mobile fix ---- */
+  .post-content-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post-content-wrapper .image-layer {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: unset !important;
+    pointer-events: auto;
+  }
+
+  .post-content-wrapper .image-layer .image-wrapper {
+    position: static !important;
+    width: 100% !important;
+    margin: 0.75rem 0;
+  }
+
+  .post-content-wrapper .image-layer .image-wrapper img,
+  .post-content-wrapper .image-layer .image-wrapper iframe {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: unset;
+  }
+
+  .post-content-wrapper .image-layer .image-wrapper iframe {
+    aspect-ratio: 16/9 !important;
+  }
 }
