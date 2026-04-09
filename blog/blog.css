@@ -75,7 +75,10 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
   padding: 0;
 }
 
@@ -161,7 +164,13 @@
   padding: 10px;
   box-sizing: border-box;
   z-index: 1;
-  background: repeating-linear-gradient(25deg, transparent, transparent 20px, rgba(15, 25, 56, 0.3) 21px, rgba(15, 25, 56, 0.3) 25px);
+  background: repeating-linear-gradient(
+    25deg,
+    transparent,
+    transparent 20px,
+    rgba(15, 25, 56, 0.3) 21px,
+    rgba(15, 25, 56, 0.3) 25px
+  );
 }
 
 #image-layer {
@@ -288,7 +297,9 @@
   letter-spacing: 0.1em;
   padding: 0.75rem 1rem;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 #blog-search-author {
@@ -324,7 +335,10 @@
   letter-spacing: 0.08em;
   padding: 0.35rem 0.75rem;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background 0.2s;
   white-space: nowrap;
 }
 
@@ -428,6 +442,12 @@
   gap: 0.75rem;
   animation: slideUp 0.4s ease-out;
 }
+#user {
+  display:grid;
+  font-family: var(--robot-font);
+  color: rgb(173, 154, 154);
+  font-size: 0.6rem;
+}
 
 #font-size-select {
   font-size: 0.7em;
@@ -444,7 +464,7 @@
   border: 1px solid rgba(0, 94, 255, 0.3);
   border-radius: 4px;
   color: var(--white);
-  font-family: 'Rajdhani', sans-serif;
+  font-family: "Rajdhani", sans-serif;
   font-size: 1rem;
   font-weight: 500;
   padding: 0.65rem 0.9rem;
@@ -488,7 +508,9 @@
   padding: 0.6rem 1.4rem;
   cursor: pointer;
   align-self: flex-start;
-  transition: background 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 }
 
 .upload-container button:hover {
@@ -574,7 +596,9 @@
   cursor: pointer;
   font-size: 0.75rem !important;
   align-self: auto;
-  transition: background 0.15s, color 0.15s !important;
+  transition:
+    background 0.15s,
+    color 0.15s !important;
 }
 
 .remove-image-btn:hover {
@@ -612,7 +636,7 @@
   border: 1px solid rgba(0, 94, 255, 0.3);
   border-radius: 4px;
   color: var(--white);
-  font-family: 'Rajdhani', sans-serif;
+  font-family: "Rajdhani", sans-serif;
   font-size: 1rem;
   font-weight: 500;
   padding: 0.65rem 0.9rem;
@@ -668,7 +692,7 @@
 }
 
 .popup-message {
-  font-family: 'Rajdhani', sans-serif;
+  font-family: "Rajdhani", sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.04em;
