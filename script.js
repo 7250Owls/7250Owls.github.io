@@ -206,7 +206,7 @@ async function fetchLiveStream() {
 
         const active = events.find(e => e.start_date <= today && e.end_date >= today);
 
-            if (!active) {
+        if (!active) {
             container.innerHTML = `
                 <div class="stats-card">
                     <h3 style="font-family:var(--robot-font); color:var(--neon-blue);">NO ACTIVE EVENT</h3>
@@ -229,7 +229,14 @@ async function fetchLiveStream() {
             return;
         }
 
-        const { type, channel } = webcasts[0];
+        let webindex;
+        webcasts.forEach((element, index) => {
+            if (element["date"] == today) {
+                webindex = index;
+            }
+        });
+
+            const { type, channel } = webcasts[webindex];
         let src = null;
         if (type === 'twitch')
             src = `https://player.twitch.tv/?channel=${channel}&parent=${location.hostname}`;
