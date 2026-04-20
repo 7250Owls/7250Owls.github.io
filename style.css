@@ -144,6 +144,7 @@ body {
 
 @media screen and (max-width: 768px) {
     html { -webkit-text-size-adjust: 100%; }
+    .nav-links {font-size: 0.6rem;}
     .navbar { padding: 0.5rem 3%; }
     .nav-brand-row { flex-direction: column !important; align-items: center !important; gap: 12px; }
     .nav-marquee { max-width: 100% !important; width: 100% !important; margin: 5px 0; }
