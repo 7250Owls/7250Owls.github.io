@@ -10,7 +10,5 @@ function showSection(sectionId) {
         return onclick && onclick.includes(sectionId);
     });
     if (activeLink) activeLink.classList.add('active');
-    if (sectionId === 'stats') { fetchTeamStats(); }
-    if (sectionId === 'live') { fetchLiveStream(); }
     window.scrollTo(0, 0);
 }
