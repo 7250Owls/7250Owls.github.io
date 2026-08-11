@@ -36,19 +36,21 @@ body {
 .social-links a { color: var(--white); font-size: 1.2rem; opacity: 0.6; transition: 0.3s; }
 
 .nav-marquee { flex-grow: 1; overflow: hidden; mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); max-width: 50%; display: flex; }
-.nav-marquee-content { display: flex; gap: 4rem; align-items: center; white-space: nowrap; width: max-content; }
+.nav-marquee-content { display: flex; gap: 4rem; align-items: center; white-space: nowrap; width: max-content;
 
-.nav-marquee-content img { height: 25px !important; width: auto !important; opacity: 0.5; filter: grayscale(1); object-fit: contain; }
+.nav-marquee-content img { height: 25px !important; width: auto !important; opacity: 0.5; filter: grayscale(1) invert(1); object-fit: contain; }
 
 @keyframes navScroll { from { transform: translateX(0); } to { transform: translateX(var(--scroll-distance)); } }
 
 .logo-group { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-.logo { font-family: var(--robot-font); font-size: 1.1rem; letter-spacing: 1px; }
+.logo {
+    font-family: var(--robot-font), serif; font-size: 1.1rem; letter-spacing: 1px; }
 .logo span { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
 .nav-logo-right { height: 32px; width: auto; filter: drop-shadow(0 0 5px var(--neon-blue)); }
 
 .nav-links { display: flex; list-style: none; gap: 30px; justify-content: center; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-.nav-links a { text-decoration: none; color: var(--white); font-family: var(--robot-font); font-size: 0.8rem; transition: 0.3s; opacity: 0.6; }
+.nav-links a { text-decoration: none; color: var(--white);
+    font-family: var(--robot-font), serif; font-size: 0.8rem; transition: 0.3s; opacity: 0.6; }
 .nav-links a.active { opacity: 1; color: var(--neon-blue); text-shadow: 0 0 8px var(--neon-blue); }
 
 .container { padding: 2rem 8%; max-width: 1200px; margin: 0 auto; }
@@ -232,4 +234,5 @@ body {
 @media screen and (max-width: 768px) {
     .countdown-timer { font-size: 2.5rem; }
     .match-details { font-size: 1.2rem; }
+}
 }
