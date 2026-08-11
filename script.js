@@ -323,14 +323,14 @@ async function fetchLiveStream() {
                 if (secsLeft <= 0) {
                     el.textContent = 'QUEUING NOW';
                     clearInterval(window._countdownInterval);
-                    return;
+                } else {
+                    const h = Math.floor(secsLeft / 3600);
+                    const m = Math.floor((secsLeft % 3600) / 60);
+                    const s = secsLeft % 60;
+                    el.textContent = h > 0
+                        ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+                        : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
                 }
-                const h = Math.floor(secsLeft / 3600);
-                const m = Math.floor((secsLeft % 3600) / 60);
-                const s = secsLeft % 60;
-                el.textContent = h > 0
-                    ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-                    : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
             }, 1000);
         }
     } catch (err) {
@@ -472,6 +472,9 @@ async function prefetchCurrentYear() {
         // silently fail — fetchTeamStats will handle errors when user clicks EVENTS
     }
 }
-initMarquee();
-checkForActiveEvent();
-prefetchCurrentYear();
+
+document.addEventListener('DOMContentLoaded', () => {
+    initMarquee();
+    checkForActiveEvent();
+    prefetchCurrentYear();
+});
