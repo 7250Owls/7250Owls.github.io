@@ -431,6 +431,7 @@ a {
     justify-content: center;
     color: white;
     margin-top: -1rem;
+    font-size: 1.7rem;
     text-shadow: 0 0 10px var(--neon-blue);;
 }
 
