@@ -169,18 +169,18 @@ a {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 2.5rem;
+    width: 100%;
 }
+
 .venmo {
     border-radius: 8px;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-family: var(--robot-font), serif;
     color: #fff;
     text-align: center;
     display: inline-block;
-    width: 50%;
-    padding: 1.5rem 3rem;
-    margin: 1rem;
+    padding: 1.5rem 4rem;
     background: linear-gradient(135deg, var(--neon-blue), #003fcc);
     border: 2px solid var(--neon-blue);
     transition: all 0.3s ease;
@@ -192,7 +192,7 @@ a {
 }
 
 .venmo:hover {
-    transform: rotate(1deg) scale(1.05);;
+    transform: translateY(-4px);
     box-shadow: 0 0 30px rgba(0, 94, 255, 0.6), 0 10px 25px rgba(0, 94, 255, 0.2);
     background: linear-gradient(135deg, #003fcc, var(--neon-blue));
 }
@@ -435,44 +435,57 @@ a {
     text-shadow: 0 0 10px var(--neon-blue);;
 }
 
+.donate-about-card {
+    background: var(--dark-grey);
+    border: 1px solid rgb(106 119 149 / 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    border-radius: 12px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
 .donate-image-container {
     display: flex;
     width: 100%;
     justify-content: center;
+    margin: 2rem 0;
 }
 
 .donate-image {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 14rem;
-    background: rgba(17, 0, 255, 0.2);
-    border: 1px solid royalblue;
-    border-radius: 4px;
-    color: #4495ff;
-    text-decoration: none;
-    font-size: 0.7rem;
-    transition: 0.2s;
-    flex: 0 0 auto;
+    width: 280px;
+    height: auto;
+    border-radius: 8px;
+    border: 2px solid var(--neon-blue);
+    box-shadow: 0 0 20px rgba(0, 94, 255, 0.4);
+    transition: 0.3s ease;
 }
 
 .donate-text {
-    display: flex;
-    justify-content: center;
+    width: 100%;
     text-align: center;
-    max-width: 75ch;
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 1.3rem;
-    line-height: 1.7rem;
+    max-width: 85ch;
+    margin: 0 0 2rem 0;
+    color: #e0e0e0;
+    font-size: 1.05rem;
+    line-height: 1.9;
+    letter-spacing: 0.3px;
 }
 
 .info {
     text-align: center;
     width: 100%;
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 0.9rem;;
+    color: #b0b0b0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    letter-spacing: 0.2px;
+    padding: 1.5rem;
+    background: rgba(0, 94, 255, 0.08);
+    border-radius: 8px;
+    border-left: 3px solid var(--neon-blue);
 }
 
 .video-link:hover {
